@@ -1,7 +1,7 @@
 # 스타 스키마 실습
 
 ### 1. 개요
-- 6개월치의 카드 사용 금액 데이터셋을 사용하여 스타 스키마 구조와 태블로를 사용하여 대시보드를 생성하였습니다.
+- 6개월치의 카드 사용 금액 데이터셋을 사용하여 스타 스키마 구조를 생성하고 카드 사용금액 대시보드를 생성하였습니다.
 
 ### 2. 데이터셋
 - [AI 허브 사이트](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&&srchDataRealmCode=REALM015&aihubDataSe=data&dataSetSn=71792)에서 제공하는 금융 합성 데이터를 활용하였습니다. 
