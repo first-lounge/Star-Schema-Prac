@@ -21,5 +21,40 @@
     - 최종적으로 **1800만 건의 레코드**를 포함하는 테이블들을 2개 생성하였습니다.
    
   ### 2. 테이블 구조
-  - 차원 테이
+  - 4개의 차원 테이블과 1개의 팩트 테이블로 구성
+
+  ### 3. 데이터 마트 - 6개의 집계 테이블로 구성
+  - **dm_monthly_amt** - 전체 월별 총액
+    
+|컬럼명|설명|타입|
+|------|---|---|
+|`used_date`|날짜 (**YYYY-MM-01**) |DATE|
+|`monthly_sum`|총 금액|INT|
+
+- **dm_quarter_amt** - 분기별 총액
+    
+|컬럼명|설명|타입|
+|------|---|---|
+|`year`|년|INT|
+|`quarter`|분기|VARCHAR|
+|`quarter_amt`|분기별 총액|INT|
+
+- **dm_monthly_payment_amt** - 결제 수단별 월별 총액
+    
+|컬럼명|설명|타입|
+|------|---|---|
+|`used_date`|날짜 (**YYYY-MM-01**) |DATE|
+|`payment_name`|결제 수단|VARCHAR|
+|`monthly_payment_amt`|결제 수단별 월별 총액|INT|
+
+- ### `dm_monthly_channel_amt` - 유입 채널별 월별 총액
+
+| 컬럼명 | 설명 | 타입 |
+| --- | --- | --- |
+|`used_date`| 날짜 (**YYYY-MM-01**)  | DATE |
+|`channel_name`| 유입 채널명 | VARCHAR |
+|`monthly_channel_amt`| 채널별 월별 총액 | INT |
+
+
+ 
 
