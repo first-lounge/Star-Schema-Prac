@@ -55,6 +55,21 @@
 |`channel_name`| 유입 채널명 | VARCHAR |
 |`monthly_channel_amt`| 채널별 월별 총액 | INT |
 
+- ### `dm_monthly_gender_amt` - 성별 월별 총액
+
+| 컬럼명 | 설명 | 타입 |
+| --- | --- | --- |
+|`used_date`| 날짜 (**YYYY-MM-01**)  | DATE |
+|`gender`| 성별 (**M/F**) | VARCHAR |
+|`monthly_gender_amt`| 성별 월별 총액 | INT |
+
+- ### `dm_monthly_age_amt` - 연령대별 월별 총액
+
+| 컬럼명 | 설명 | 타입 |
+| --- | --- | --- |
+|`used_date` 날짜 (**YYYY-MM-01**)  | DATE |
+|`age_group` 연령대 | VARCHAR |
+|`monthly_age_amt` 연령대별 월별 총액 | INT |
 
  
 
