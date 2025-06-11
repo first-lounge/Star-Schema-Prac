@@ -133,6 +133,7 @@
     | --- | --- | --- |
     | `payment_key` | 결제 방식 Key | INT (**PK**) |
     | `payment_name` | 결제 방식 이름 | VARCHAR |
+    
       <payment_name 컬럼 값에 따른 표기>
       1 : card
       2 : pay
@@ -155,16 +156,7 @@
       -1 : unknown
     </details>
 
-### 4. 데이터 정합성 및 무결성 체크
-- 팩트 테이블에서 key 컬럼들을 FK로 지정 후 데이터 삽입하는 과정에서 20분이 넘어도 삽입이 완료되지 않는 문제가 발생하였습니다.
-- 따라서, <**CREATE TABLE ~ AS SELECT**>으로 쿼리 결과를 팩트 테이블로 만든 후 수동으로 데이터 정합성과 무결성을 체크하였습니다.
-
-  <details>
-    <summary>정합성 검사</summary>
-    - 각 차원 테이블
-  </details>
-
-### 5. 데이터 마트 
+### 4. 데이터 마트 
 - 6개의 집계 테이블로 구성
 
   <details>
@@ -218,6 +210,28 @@
     |`monthly_age_amt` 연령대별 월별 총액 | INT |
       
   </details>
+
+### 5. 데이터 정합성 & 무결성 체크
+- 팩트 테이블에서 key 컬럼들을 FK로 지정 후 데이터 삽입하는 과정에서 20분이 넘어도 삽입이 완료되지 않는 문제가 발생하였습니다.
+- 따라서, <**CREATE TABLE ~ AS SELECT**>으로 쿼리 결과를 팩트 테이블로 만든 후 수동으로 데이터 정합성과 무결성을 체크하였습니다.
+- 정합성 검사
+  - 원본 테이블
+    - 회원 중 신규 회원 혹은 탈퇴 회원이 존재하는지 **HAVING**절과 **DISTINCT**로 확인 
+      <details>
+        <summary>쿼리문</summary>
+    
+        ```sql
+        select 
+          발급회원번호, 
+          count(발급회원번호) as cnt
+        from card_member.member_info
+        group by 1
+        having cnt < 6;
+        ```
+      </details>
+
+
+- 무결성 검사
 
 
 ## 📊 Tableau 시각화
