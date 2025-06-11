@@ -208,14 +208,23 @@
 
 
 ### 5. 대시보드 및 데이터 마트 시각화
-<details>
-  <summary>대시보드</summary>
-    ![ERD](./img/dashboard.png)
-</details>
- 
+- 대시보드
+  <details>
+    <summary>시각화</summary>
+        <img src="./img/dashboard.png"width="850" height="680"/>
+  </details>
+    
 
-- 시각화
+- 대시보드에 포함 안된 데이터 마트 시각화
+  <details>
+    <summary>성별 월별 카드 사용 금액</summary>
+        <img src="./img/age_monthly.png"width="400" height="450"/>
+  </details>
 
+  <details>
+    <summary>분기별 카드 사용 금액</summary>
+        <img src="./img/quarter.png"width="200" height="550"/>
+  </details>
 
 
  
