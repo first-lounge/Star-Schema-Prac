@@ -99,54 +99,54 @@
       
 
     
-  <details>
-  <summary>차원 테이블</summary>
-
-  - ### `dim_member` - 회원
-
-  | 컬럼명 | 설명 | 타입 |
-  | --- | --- | --- |
-  | `member_key` | 고객 Key  | VARCHAR (**PK**) |
-  | `gender` | 성별 (**M/F**) | VARCHAR |
-  | `age_group` | 연령대 | VARCHAR |
-
-  - ### `dim_date` - 날짜
-
-  | 컬럼명 | 설명 | 타입 |
-  | --- | --- | --- |
-  | `date_key` | 날짜 Key (**YYYYMM**)  | INT (**PK**) |
-  | `used_date`  | 날짜 (**YYYY-MM-01**) | DATE |
-  | `year` | 연도 | INT |
-  | `month` | 월 | INT |
-  | `quarter` | 분기 | VARCHAR |
-
-  - ### `dim_payment`- 결제 수단
-
-  | 컬럼명 | 설명 | 타입 |
-  | --- | --- | --- |
-  | `payment_key` | 결제 방식 Key | INT (**PK**) |
-  | `payment_name` | 결제 방식 이름 | VARCHAR |
-    <payment_name 컬럼 값에 따른 표기>
-    1 : card
-    2 : pay
-    3 : a_pay
-    4 : b_pay
-    5 : c_pay
-    6 : d_pay
-    7 : simple_pay
-    8 : our_pay (당사페이) 
-
-  - ### `dim_channel` - 결제 채널
-
-  | 컬럼명 | 설명 | 타입 |
-  | --- | --- | --- |
-  | `channel_key` | 결제 채널 Key | INT (**PK**) |
-  | `channel_name` | 결제 채널 이름 | VARCHAR |
-    <channel_name 컬럼 값에 따른 표기>
-    1 : online
-    2 : offline
-    -1 : unknown
-  </details>
+    <details>
+    <summary>차원 테이블</summary>
+  
+    - ### `dim_member` - 회원
+  
+    | 컬럼명 | 설명 | 타입 |
+    | --- | --- | --- |
+    | `member_key` | 고객 Key  | VARCHAR (**PK**) |
+    | `gender` | 성별 (**M/F**) | VARCHAR |
+    | `age_group` | 연령대 | VARCHAR |
+  
+    - ### `dim_date` - 날짜
+  
+    | 컬럼명 | 설명 | 타입 |
+    | --- | --- | --- |
+    | `date_key` | 날짜 Key (**YYYYMM**)  | INT (**PK**) |
+    | `used_date`  | 날짜 (**YYYY-MM-01**) | DATE |
+    | `year` | 연도 | INT |
+    | `month` | 월 | INT |
+    | `quarter` | 분기 | VARCHAR |
+  
+    - ### `dim_payment`- 결제 수단
+  
+    | 컬럼명 | 설명 | 타입 |
+    | --- | --- | --- |
+    | `payment_key` | 결제 방식 Key | INT (**PK**) |
+    | `payment_name` | 결제 방식 이름 | VARCHAR |
+      <payment_name 컬럼 값에 따른 표기>
+      1 : card
+      2 : pay
+      3 : a_pay
+      4 : b_pay
+      5 : c_pay
+      6 : d_pay
+      7 : simple_pay
+      8 : our_pay (당사페이) 
+  
+    - ### `dim_channel` - 결제 채널
+  
+    | 컬럼명 | 설명 | 타입 |
+    | --- | --- | --- |
+    | `channel_key` | 결제 채널 Key | INT (**PK**) |
+    | `channel_name` | 결제 채널 이름 | VARCHAR |
+      <channel_name 컬럼 값에 따른 표기>
+      1 : online
+      2 : offline
+      -1 : unknown
+    </details>
 
 
 ### 3. 데이터 마트 
