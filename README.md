@@ -18,74 +18,146 @@
   - 시각화 목적에 필요한 컬럼 추출
     - '**01. 카드 회원정보** 파일에서 79개 컬럼 중 6개의 컬럼 추출
     - '**03.카드 승인매출정보**' 파일에서 430개 컬럼 중 13개 컬럼 추출
-    - 최종적으로 **1800만 건의 레코드**를 포함하는 테이블들을 2개 생성하였습니다.
+    - 최종적으로 **1800만 건의 레코드**를 포함하는 테이블을 2개 생성하였습니다.
    
-  ### 2. 테이블 구조
-  <details>
-  <summary>팩트 테이블</summary>
-  - 병합한 2개의 테이블에서 월별 고객별 지불 수단별 총합의 결과를 unpivot을 통해 팩트 테이블로 생성하였습니다. 
-  - duckdb에서 다른 스키마에 있는 테이블들의 컬럼을 사용하여 FK 설정은 불가능
-    
-  - ### `fact_monthly_amt` - 월별 결제 금액
-
-  | 컬럼명 | 설명 | 타입 |
-  | --- | --- | --- |
-  | `date_key` | 날짜 Key (**기준년월**) | INT (**FK**) |
-  | `member_key` | 고객 Key | VARCHAR (**FK**) |
-  | `payment_key` | 결제 수단 Key | INT (**FK**) |
-  | `channel_key` | 결제 채널 Key | INT (**FK**) |
-  | `total_amt` | 결제 금액 | INT |
-  
-  </details>
+  ### 2. 차원 테이블 및 팩트 테이블
+  - 팩트 테이블
+    <details>
+    <summary>설명</summary>
       
-  <details>
-  <summary>차원 테이블</summary>
+      - 병합한 2개의 테이블에서 월별 고객별 지불 수단별 총합의 결과를 unpivot을 사용하여 생성하였습니다. 
+    </details>
+    
+  
+    <details>
+    <summary>테이블 구조</summary>
+      
+    - ### `fact_monthly_amt` - 월별 결제 금액
+  
+    | 컬럼명 | 설명 | 타입 |
+    | --- | --- | --- |
+    | `date_key` | 날짜 Key (**기준년월**) | INT (**FK**) |
+    | `member_key` | 고객 Key | VARCHAR (**FK**) |
+    | `payment_key` | 결제 수단 Key | INT (**FK**) |
+    | `channel_key` | 결제 채널 Key | INT (**FK**) |
+    | `total_amt` | 결제 금액 | INT |
+    
+    </details>
 
-  - ### `dim_member` - 회원
+    <details>
+    <summary>쿼리문</summary>
 
-  | 컬럼명 | 설명 | 타입 |
-  | --- | --- | --- |
-  | `member_key` | 고객 Key  | VARCHAR (**PK**) |
-  | `gender` | 성별 (**M/F**) | VARCHAR |
-  | `age_group` | 연령대 | VARCHAR |
+    ```sql
+    CREATE TABLE fact.fact_total_amt AS
+    WITH unpivoted AS 
+    (
+        SELECT 기준년월 AS date_key, 발급회원번호 AS member_key, '이용금액_온라인_B0M' AS col_name, 이용금액_온라인_B0M AS total_amt FROM card_usage.payment_amt WHERE 이용금액_온라인_B0M IS NOT NULL
+        UNION ALL
+        SELECT 기준년월, 발급회원번호, '이용금액_오프라인_B0M', 이용금액_오프라인_B0M FROM card_usage.payment_amt WHERE 이용금액_오프라인_B0M IS NOT NULL
+        UNION ALL
+        SELECT 기준년월, 발급회원번호, '이용금액_페이_온라인_B0M', 이용금액_페이_온라인_B0M FROM card_usage.payment_amt WHERE 이용금액_페이_온라인_B0M IS NOT NULL
+        UNION ALL
+        SELECT 기준년월, 발급회원번호, '이용금액_페이_오프라인_B0M', 이용금액_페이_오프라인_B0M FROM card_usage.payment_amt WHERE 이용금액_페이_오프라인_B0M IS NOT NULL
+        UNION ALL
+        SELECT 기준년월, 발급회원번호, '이용금액_당사페이_B0M', 이용금액_당사페이_B0M FROM card_usage.payment_amt WHERE 이용금액_당사페이_B0M IS NOT NULL
+        UNION ALL
+        SELECT 기준년월, 발급회원번호, '이용금액_A페이_B0M', 이용금액_A페이_B0M FROM card_usage.payment_amt WHERE 이용금액_A페이_B0M IS NOT NULL
+        UNION ALL
+        SELECT 기준년월, 발급회원번호, '이용금액_B페이_B0M', 이용금액_B페이_B0M FROM card_usage.payment_amt WHERE 이용금액_B페이_B0M IS NOT NULL
+        UNION ALL
+        SELECT 기준년월, 발급회원번호, '이용금액_C페이_B0M', 이용금액_C페이_B0M FROM card_usage.payment_amt WHERE 이용금액_C페이_B0M IS NOT NULL
+        UNION ALL
+        SELECT 기준년월, 발급회원번호, '이용금액_D페이_B0M', 이용금액_D페이_B0M FROM card_usage.payment_amt WHERE 이용금액_D페이_B0M IS NOT NULL
+        UNION ALL
+        SELECT 기준년월, 발급회원번호, '이용금액_간편결제_B0M', 이용금액_간편결제_B0M FROM card_usage.payment_amt WHERE 이용금액_간편결제_B0M IS NOT NULL
+    ), with_keys AS (
+        SELECT
+            date_key,
+            member_key,
+            CASE col_name
+                WHEN '이용금액_온라인_B0M' THEN 1
+                WHEN '이용금액_오프라인_B0M' THEN 1
+                WHEN '이용금액_페이_온라인_B0M' THEN 2
+                WHEN '이용금액_페이_오프라인_B0M' THEN 2
+                WHEN '이용금액_당사페이_B0M' THEN 3
+                WHEN '이용금액_A페이_B0M' THEN 4
+                WHEN '이용금액_B페이_B0M' THEN 5
+                WHEN '이용금액_C페이_B0M' THEN 6
+                WHEN '이용금액_D페이_B0M' THEN 7
+                WHEN '이용금액_간편결제_B0M' THEN 8
+            END AS payment_key,
+            CASE col_name
+                WHEN '이용금액_온라인_B0M' THEN 1
+                WHEN '이용금액_오프라인_B0M' THEN 2
+                WHEN '이용금액_페이_온라인_B0M' THEN 1
+                WHEN '이용금액_페이_오프라인_B0M' THEN 2
+                ELSE -1
+            END AS channel_key,
+            total_amt
+        FROM unpivoted
+    )
+    SELECT
+        date_key,
+        member_key,
+        payment_key,
+        channel_key,
+        SUM(total_amt) AS total_amt
+    FROM with_keys
+    GROUP BY date_key, member_key, payment_key, channel_key
+    ```
 
-  - ### `dim_date` - 날짜
-
-  | 컬럼명 | 설명 | 타입 |
-  | --- | --- | --- |
-  | `date_key` | 날짜 Key (**YYYYMM**)  | INT (**PK**) |
-  | `used_date`  | 날짜 (**YYYY-MM-01**) | DATE |
-  | `year` | 연도 | INT |
-  | `month` | 월 | INT |
-  | `quarter` | 분기 | VARCHAR |
-
-  - ### `dim_payment`- 결제 수단
-
-  | 컬럼명 | 설명 | 타입 |
-  | --- | --- | --- |
-  | `payment_key` | 결제 방식 Key | INT (**PK**) |
-  | `payment_name` | 결제 방식 이름 | VARCHAR |
-    <payment_name 컬럼 값에 따른 표기>
-    1 : card
-    2 : pay
-    3 : a_pay
-    4 : b_pay
-    5 : c_pay
-    6 : d_pay
-    7 : simple_pay
-    8 : our_pay (당사페이) 
-
-  - ### `dim_channel` - 결제 채널
-
-  | 컬럼명 | 설명 | 타입 |
-  | --- | --- | --- |
-  | `channel_key` | 결제 채널 Key | INT (**PK**) |
-  | `channel_name` | 결제 채널 이름 | VARCHAR |
-    <channel_name 컬럼 값에 따른 표기>
-    1 : online
-    2 : offline
-    -1 : unknown
-  </details>
+    </details>
+    
+  - 차원 테이블
+    
+    <details>
+    <summary>테이블 구조</summary>
+  
+    - ### `dim_member` - 회원
+  
+    | 컬럼명 | 설명 | 타입 |
+    | --- | --- | --- |
+    | `member_key` | 고객 Key  | VARCHAR (**PK**) |
+    | `gender` | 성별 (**M/F**) | VARCHAR |
+    | `age_group` | 연령대 | VARCHAR |
+  
+    - ### `dim_date` - 날짜
+  
+    | 컬럼명 | 설명 | 타입 |
+    | --- | --- | --- |
+    | `date_key` | 날짜 Key (**YYYYMM**)  | INT (**PK**) |
+    | `used_date`  | 날짜 (**YYYY-MM-01**) | DATE |
+    | `year` | 연도 | INT |
+    | `month` | 월 | INT |
+    | `quarter` | 분기 | VARCHAR |
+  
+    - ### `dim_payment`- 결제 수단
+  
+    | 컬럼명 | 설명 | 타입 |
+    | --- | --- | --- |
+    | `payment_key` | 결제 방식 Key | INT (**PK**) |
+    | `payment_name` | 결제 방식 이름 | VARCHAR |
+      <payment_name 컬럼 값에 따른 표기>
+      1 : card
+      2 : pay
+      3 : a_pay
+      4 : b_pay
+      5 : c_pay
+      6 : d_pay
+      7 : simple_pay
+      8 : our_pay (당사페이) 
+  
+    - ### `dim_channel` - 결제 채널
+  
+    | 컬럼명 | 설명 | 타입 |
+    | --- | --- | --- |
+    | `channel_key` | 결제 채널 Key | INT (**PK**) |
+    | `channel_name` | 결제 채널 이름 | VARCHAR |
+      <channel_name 컬럼 값에 따른 표기>
+      1 : online
+      2 : offline
+      -1 : unknown
+    </details>
   
   <details>
   <summary>데이터 마트 (6개의 집계 테이블로 구성)</summary>
