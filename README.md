@@ -207,7 +207,7 @@
   </details>
 
 
-### 5. 대시보드 및 데이터 마트 시각화
+### 📊 Tableau 시각화
 - 대시보드
   <details>
     <summary>시각화</summary>
