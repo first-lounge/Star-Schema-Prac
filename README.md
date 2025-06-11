@@ -208,7 +208,10 @@
 
 
 ### 5. 대시보드 및 데이터 마트 시각화
-- 대시보드
+<details>
+  <summary>대시보드</summary>
+    ![ERD](./img/dashboard.png)
+</details>
  
 
 - 시각화
