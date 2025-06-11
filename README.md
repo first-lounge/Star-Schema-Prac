@@ -23,18 +23,18 @@
   ### 2. 차원 테이블 및 팩트 테이블
   - 팩트 테이블
     - ### `fact_monthly_amt` - 월별 결제 금액
-        - 병합한 2개의 테이블에서 월별 고객별 지불 수단별 총합의 결과를 unpivot을 사용하여 생성하였습니다. 
-      
-            | 컬럼명 | 설명 | 타입 |
-            | --- | --- | --- |
-            | `date_key` | 날짜 Key (**기준년월**) | INT (**FK**) |
-            | `member_key` | 고객 Key | VARCHAR (**FK**) |
-            | `payment_key` | 결제 수단 Key | INT (**FK**) |
-            | `channel_key` | 결제 채널 Key | INT (**FK**) |
-            | `total_amt` | 결제 금액 | INT |
+        | 컬럼명 | 설명 | 타입 |
+        | --- | --- | --- |
+        | `date_key` | 날짜 Key (**기준년월**) | INT (**FK**) |
+        | `member_key` | 고객 Key | VARCHAR (**FK**) |
+        | `payment_key` | 결제 수단 Key | INT (**FK**) |
+        | `channel_key` | 결제 채널 Key | INT (**FK**) |
+        | `total_amt` | 결제 금액 | INT |
     
       <details>
       <summary>쿼리문</summary>
+        
+        - 병합한 2개의 테이블에서 월별 고객별 지불 수단별 총합의 결과를 unpivot을 사용하여 생성하였습니다. 
   
       ```sql
       CREATE TABLE fact.fact_total_amt AS
@@ -148,8 +148,10 @@
       -1 : unknown
     </details>
 
+### 3. 정합성 및 무결성 검사
+- DuckDB에서 
 
-### 3. 데이터 마트 
+### 4. 데이터 마트 
 - 6개의 집계 테이블로 구성
 
   <details>
