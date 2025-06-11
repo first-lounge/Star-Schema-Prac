@@ -217,7 +217,7 @@
 
 - 대시보드에 포함 안된 데이터 마트 시각화
   <details>
-    <summary>성별 월별 카드 사용 금액</summary>
+    <summary>연령대별 월별 카드 사용 금액</summary>
         <img src="./img/age_monthly.png"width="400" height="450"/>
   </details>
 
