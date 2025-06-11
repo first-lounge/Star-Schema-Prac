@@ -218,24 +218,109 @@
 ### 5. 데이터 정합성 & 무결성 체크
 - 팩트 테이블에서 key 컬럼들을 FK로 지정 후 데이터 삽입하는 과정에서 20분이 넘어도 삽입이 완료되지 않는 문제가 발생하였습니다.
 - 따라서, <**CREATE TABLE ~ AS SELECT**>으로 쿼리 결과를 팩트 테이블로 만든 후 수동으로 데이터 정합성과 무결성을 체크하였습니다.
-- **정합성 검사**
-  - 원본 테이블
-    - 회원 중 신규 회원 혹은 탈퇴 회원이 존재하는지 **HAVING**절과 **DISTINCT**로 확인 
-      <details>
-        <summary>쿼리문</summary>
-    
-        ```sql
-        select 
-          발급회원번호, 
-          count(발급회원번호) as cnt
-        from card_member.member_info
-        group by 1
-        having cnt < 6;
-        ```
-      </details>
+  
+- **원본 테이블**
+  - 회원 중 신규 회원 혹은 탈퇴 회원이 존재하는지 **HAVING**절과 **DISTINCT**로 **데이터 정합성** 검사
+    <details>
+      <summary>쿼리문</summary>
+  
+      ```sql
+      select 
+        발급회원번호, 
+        count(발급회원번호) as cnt
+      from card_member.member_info
+      group by 1
+      having cnt < 6;
+      ```
+    </details>
 
-  - 차원 테이블
-    
+- **팩트 테이블**
+  - `fact_monthly_amt` 테이블의 외래 키가 참조하는 차원 테이블에 실제로 존재하는 값인지 확인
+  - **NOT EXISTS**와 **IS NULL** 조건으로 **참조 무결성 & 데이터 정합성** 검사
+
+    <details>
+      <summary>date_key</summary>
+  
+      ```sql
+      SELECT
+          f.*
+      FROM
+          fact.fact_monthly_amt AS f
+      WHERE
+          f.date_key IS NULL
+          OR NOT EXISTS (
+              SELECT
+                  1
+              FROM
+                  dim.dim_date AS d
+              WHERE
+                  f.date_key = d.date_key
+          );
+      ```
+    </details>
+
+    <details>
+    <summary>member_key</summary>
+  
+      ```sql
+      SELECT
+          f.*
+      FROM
+          fact.fact_monthly_amt AS f
+      WHERE
+          f.member_key IS NULL
+          OR NOT EXISTS (
+              SELECT
+                  1
+              FROM
+                  dim.dim_member AS d
+              WHERE
+                  f.member_key = d.member_key
+          );
+      ```
+    </details>
+
+    <details>
+    <summary>payment_key</summary>
+  
+      ```sql
+      SELECT
+          f.*
+      FROM
+          fact.fact_monthly_amt AS f
+      WHERE
+          f.payment_key IS NULL
+          OR NOT EXISTS (
+              SELECT
+                  1
+              FROM
+                  dim.dim_payment AS d
+              WHERE
+                  f.payment_key = d.payment_key
+          );
+      ```
+    </details>
+
+    <details>
+    <summary>channel_key</summary>
+  
+      ```sql
+      SELECT
+          f.*
+      FROM
+          fact.fact_monthly_amt AS f
+      WHERE
+          f.channel_key IS NULL
+          OR NOT EXISTS (
+              SELECT
+                  1
+              FROM
+                  dim.dim_channel AS d
+              WHERE
+                  f.channel_key = d.channel_key
+          );
+      ```
+    </details>
 
 
 - **무결성 검사**
