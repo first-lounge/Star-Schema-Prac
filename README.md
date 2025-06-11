@@ -22,7 +22,7 @@
    
   ### 2. 차원 테이블 및 팩트 테이블
   - 팩트 테이블
-    - ### `fact_monthly_amt` - 월별 결제 금액
+    - #### `fact_monthly_amt` - 월별 결제 금액
         | 컬럼명 | 설명 | 타입 |
         | --- | --- | --- |
         | `date_key` | 날짜 Key (**기준년월**) | INT (**FK**) |
@@ -102,7 +102,7 @@
     <details>
     <summary>차원 테이블</summary>
   
-    - ### `dim_member` - 회원
+    - #### `dim_member` - 회원
   
     | 컬럼명 | 설명 | 타입 |
     | --- | --- | --- |
@@ -110,7 +110,7 @@
     | `gender` | 성별 (**M/F**) | VARCHAR |
     | `age_group` | 연령대 | VARCHAR |
   
-    - ### `dim_date` - 날짜
+    - #### `dim_date` - 날짜
   
     | 컬럼명 | 설명 | 타입 |
     | --- | --- | --- |
@@ -120,7 +120,7 @@
     | `month` | 월 | INT |
     | `quarter` | 분기 | VARCHAR |
   
-    - ### `dim_payment`- 결제 수단
+    - #### `dim_payment`- 결제 수단
   
     | 컬럼명 | 설명 | 타입 |
     | --- | --- | --- |
@@ -136,7 +136,7 @@
       7 : simple_pay
       8 : our_pay (당사페이) 
   
-    - ### `dim_channel` - 결제 채널
+    - #### `dim_channel` - 결제 채널
   
     | 컬럼명 | 설명 | 타입 |
     | --- | --- | --- |
