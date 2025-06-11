@@ -23,56 +23,121 @@
   ### 2. 테이블 구조
   - 4개의 차원 테이블과 1개의 팩트 테이블로 구성
 
-  ### 3. 데이터 마트 
   <details>
-  <summary>6개의 집계 테이블로 구성</summary>
-
-- #### `dm_monthly_amt` - 전체 월별 총액
+  <summary>팩트 테이블</summary>
+  - 병합한 2개의 테이블에서 월별 고객별 지불 수단별 총합의 결과를 unpivot을 통해 팩트 테이블로 생성하였습니다. 
+  - duckdb에서 다른 스키마에 있는 테이블들의 컬럼을 사용하여 FK 설정은 불가능
     
-|컬럼명|설명|타입|
-|------|---|---|
-|`used_date`|날짜 (**YYYY-MM-01**) |DATE|
-|`monthly_sum`|총 금액|INT|
+  - ### `fact_monthly_amt` - 월별 결제 금액
 
-- #### `dm_quarter_amt` - 분기별 총액
+  | 컬럼명 | 설명 | 타입 |
+  | --- | --- | --- |
+  | `date_key` | 날짜 Key (**기준년월**) | INT (**FK**) |
+  | `member_key` | 고객 Key | VARCHAR (**FK**) |
+  | `payment_key` | 결제 수단 Key | INT (**FK**) |
+  | `channel_key` | 결제 채널 Key | INT (**FK**) |
+  | `total_amt` | 결제 금액 | INT |
+  
+  </details>
+      
+  <details>
+  <summary>차원 테이블</summary>
+
+  - ### `dim_member` - 회원
+
+  | 컬럼명 | 설명 | 타입 |
+  | --- | --- | --- |
+  | `member_key` | 고객 Key  | VARCHAR (**PK**) |
+  | `gender` | 성별 (**M/F**) | VARCHAR |
+  | `age_group` | 연령대 | VARCHAR |
+
+  - ### `dim_date` - 날짜
+
+  | 컬럼명 | 설명 | 타입 |
+  | --- | --- | --- |
+  | `date_key` | 날짜 Key (**YYYYMM**)  | INT (**PK**) |
+  | `used_date`  | 날짜 (**YYYY-MM-01**) | DATE |
+  | `year` | 연도 | INT |
+  | `month` | 월 | INT |
+  | `quarter` | 분기 | VARCHAR |
+
+  - ### `dim_payment`- 결제 수단
+
+  | 컬럼명 | 설명 | 타입 |
+  | --- | --- | --- |
+  | `payment_key` | 결제 방식 Key | INT (**PK**) |
+  | `payment_name` | 결제 방식 이름 | VARCHAR |
+    <payment_name 컬럼 값에 따른 표기>
+    1 : card
+    2 : pay
+    3 : a_pay
+    4 : b_pay
+    5 : c_pay
+    6 : d_pay
+    7 : simple_pay
+    8 : our_pay (당사페이) 
+
+  - ### `dim_channel` - 결제 채널
+
+  | 컬럼명 | 설명 | 타입 |
+  | --- | --- | --- |
+  | `channel_key` | 결제 채널 Key | INT (**PK**) |
+  | `channel_name` | 결제 채널 이름 | VARCHAR |
+    <channel_name 컬럼 값에 따른 표기>
+    1 : online
+    2 : offline
+    -1 : unknown
+  </details>
+  
+  <details>
+  <summary>데이터 마트 (6개의 집계 테이블로 구성)</summary>
     
-|컬럼명|설명|타입|
-|------|---|---|
-|`year`|년|INT|
-|`quarter`|분기|VARCHAR|
-|`quarter_amt`|분기별 총액|INT|
-
-- #### `dm_monthly_payment_amt` - 결제 수단별 월별 총액
-    
-|컬럼명|설명|타입|
-|------|---|---|
-|`used_date`|날짜 (**YYYY-MM-01**) |DATE|
-|`payment_name`|결제 수단|VARCHAR|
-|`monthly_payment_amt`|결제 수단별 월별 총액|INT|
-
-- #### `dm_monthly_channel_amt` - 유입 채널별 월별 총액
-
-| 컬럼명 | 설명 | 타입 |
-| --- | --- | --- |
-|`used_date`| 날짜 (**YYYY-MM-01**)  | DATE |
-|`channel_name`| 유입 채널명 | VARCHAR |
-|`monthly_channel_amt`| 채널별 월별 총액 | INT |
-
-- #### `dm_monthly_gender_amt` - 성별 월별 총액
-
-| 컬럼명 | 설명 | 타입 |
-| --- | --- | --- |
-|`used_date`| 날짜 (**YYYY-MM-01**)  | DATE |
-|`gender`| 성별 (**M/F**) | VARCHAR |
-|`monthly_gender_amt`| 성별 월별 총액 | INT |
-
-- #### `dm_monthly_age_amt` - 연령대별 월별 총액
-
-| 컬럼명 | 설명 | 타입 |
-| --- | --- | --- |
-|`used_date` 날짜 (**YYYY-MM-01**)  | DATE |
-|`age_group` 연령대 | VARCHAR |
-|`monthly_age_amt` 연령대별 월별 총액 | INT |
+  - #### `dm_monthly_amt` - 전체 월별 총액
+      
+  |컬럼명|설명|타입|
+  |------|---|---|
+  |`used_date`|날짜 (**YYYY-MM-01**) |DATE|
+  |`monthly_sum`|총 금액|INT|
+  
+  - #### `dm_quarter_amt` - 분기별 총액
+      
+  |컬럼명|설명|타입|
+  |------|---|---|
+  |`year`|년|INT|
+  |`quarter`|분기|VARCHAR|
+  |`quarter_amt`|분기별 총액|INT|
+  
+  - #### `dm_monthly_payment_amt` - 결제 수단별 월별 총액
+      
+  |컬럼명|설명|타입|
+  |------|---|---|
+  |`used_date`|날짜 (**YYYY-MM-01**) |DATE|
+  |`payment_name`|결제 수단|VARCHAR|
+  |`monthly_payment_amt`|결제 수단별 월별 총액|INT|
+  
+  - #### `dm_monthly_channel_amt` - 유입 채널별 월별 총액
+  
+  | 컬럼명 | 설명 | 타입 |
+  | --- | --- | --- |
+  |`used_date`| 날짜 (**YYYY-MM-01**)  | DATE |
+  |`channel_name`| 유입 채널명 | VARCHAR |
+  |`monthly_channel_amt`| 채널별 월별 총액 | INT |
+  
+  - #### `dm_monthly_gender_amt` - 성별 월별 총액
+  
+  | 컬럼명 | 설명 | 타입 |
+  | --- | --- | --- |
+  |`used_date`| 날짜 (**YYYY-MM-01**)  | DATE |
+  |`gender`| 성별 (**M/F**) | VARCHAR |
+  |`monthly_gender_amt`| 성별 월별 총액 | INT |
+  
+  - #### `dm_monthly_age_amt` - 연령대별 월별 총액
+  
+  | 컬럼명 | 설명 | 타입 |
+  | --- | --- | --- |
+  |`used_date` 날짜 (**YYYY-MM-01**)  | DATE |
+  |`age_group` 연령대 | VARCHAR |
+  |`monthly_age_amt` 연령대별 월별 총액 | INT |
 
 </details>
   
