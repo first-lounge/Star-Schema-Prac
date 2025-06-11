@@ -237,9 +237,10 @@
   - **`NOT EXISTS`** 와 **`IS NULL`** 조건으로 **참조 무결성 & 데이터 정합성** 검사
 
     <details>
-      <summary>date_key</summary>
+      <summary>쿼리문</summary>
   
       ```sql
+      -- date_key
       SELECT
           f.*
       FROM
@@ -254,13 +255,8 @@
               WHERE
                   f.date_key = d.date_key
           );
-      ```
-    </details>
 
-    <details>
-    <summary>member_key</summary>
-  
-      ```sql
+      -- member_key
       SELECT
           f.*
       FROM
@@ -275,53 +271,41 @@
               WHERE
                   f.member_key = d.member_key
           );
+
+    -- payment_key
+    SELECT
+        f.*
+    FROM
+        fact.fact_monthly_amt AS f
+    WHERE
+        f.payment_key IS NULL
+        OR NOT EXISTS (
+            SELECT
+                1
+            FROM
+                dim.dim_payment AS d
+            WHERE
+                f.payment_key = d.payment_key
+        );
+
+    -- channel_key
+    SELECT
+        f.*
+    FROM
+        fact.fact_monthly_amt AS f
+    WHERE
+        f.channel_key IS NULL
+        OR NOT EXISTS (
+            SELECT
+                1
+            FROM
+                dim.dim_channel AS d
+            WHERE
+                f.channel_key = d.channel_key
+        );
+      
       ```
     </details>
-
-    <details>
-    <summary>payment_key</summary>
-  
-      ```sql
-      SELECT
-          f.*
-      FROM
-          fact.fact_monthly_amt AS f
-      WHERE
-          f.payment_key IS NULL
-          OR NOT EXISTS (
-              SELECT
-                  1
-              FROM
-                  dim.dim_payment AS d
-              WHERE
-                  f.payment_key = d.payment_key
-          );
-      ```
-    </details>
-
-    <details>
-    <summary>channel_key</summary>
-  
-      ```sql
-      SELECT
-          f.*
-      FROM
-          fact.fact_monthly_amt AS f
-      WHERE
-          f.channel_key IS NULL
-          OR NOT EXISTS (
-              SELECT
-                  1
-              FROM
-                  dim.dim_channel AS d
-              WHERE
-                  f.channel_key = d.channel_key
-          );
-      ```
-    </details>
-
-
-- **무결성 검사**
 
 
 ## 📊 Tableau 시각화
