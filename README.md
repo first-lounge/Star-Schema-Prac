@@ -221,18 +221,16 @@
   
 - **원본 테이블**
   - 회원 중 신규 회원 혹은 탈퇴 회원이 존재하는지 **HAVING**절과 **DISTINCT**로 **데이터 정합성** 검사
-    <details>
-      <summary>쿼리문</summary>
-  
-      ```sql
-      select 
-        발급회원번호, 
-        count(발급회원번호) as cnt
-      from card_member.member_info
-      group by 1
-      having cnt < 6;
-      ```
-    </details>
+
+  ```sql
+  select 
+    발급회원번호, 
+    count(발급회원번호) as cnt
+  from card_member.member_info
+  group by 1
+  having cnt < 6;
+  ```
+
 
 - **팩트 테이블**
   - `fact_monthly_amt` 테이블의 외래 키가 참조하는 차원 테이블에 실제로 존재하는 값인지 확인
